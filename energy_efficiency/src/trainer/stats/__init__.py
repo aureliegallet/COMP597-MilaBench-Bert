@@ -6,14 +6,11 @@ the data.
 """
 from src.trainer.stats.base import TrainerStats
 from src.trainer.stats.noop import NOOPTrainerStats
-from src.trainer.stats.noop_synchronized import NOOPSynchronizedTrainerStats
 from src.trainer.stats.simple import SimpleTrainerStats
-from src.trainer.stats.torch_profiler import TorchProfilerStats
 from src.trainer.stats.codecarbon import CodeCarbonStats
 from src.trainer.stats.averaged_energy import AveragedEnergy
 from src.trainer.stats.utils import *
 import src.config as config
-import torch.profiler
 
 def init_from_conf(conf : config.Config, **kwargs):
     """Factory for initialize a `TrainerStats`.
@@ -39,13 +36,6 @@ def init_from_conf(conf : config.Config, **kwargs):
     """
     if conf.train_stats == "no-op":
         return NOOPTrainerStats()
-    elif conf.train_stats == "no-op-sync":
-        if "device" in kwargs:
-            device = kwargs["device"]
-        else:
-            print("[WARN] No device provided to simple train stats. Using default PyTorch device")
-            device = torch.get_default_device()
-        return NOOPSynchronizedTrainerStats(device)
     elif conf.train_stats == "simple":
         if "device" in kwargs:
             device = kwargs["device"]
@@ -53,16 +43,6 @@ def init_from_conf(conf : config.Config, **kwargs):
             print("[WARN] No device provided to simple train stats. Using default PyTorch device")
             device = torch.get_default_device()
         return SimpleTrainerStats(device=device)
-    elif conf.train_stats == "torch-profiler":
-        # TODO check that kwargs are present
-        pr = torch.profiler.profile(
-
-            schedule=torch.profiler.schedule(wait=1, warmup=2, active=kwargs["num_train_steps"] - 3, repeat=0),
-            record_shapes=True,
-            profile_memory=True,
-            with_stack=True
-        )                
-        return TorchProfilerStats(pr=pr)
     elif conf.train_stats == "codecarbon":
         if "device" in kwargs:
             device = kwargs["device"]

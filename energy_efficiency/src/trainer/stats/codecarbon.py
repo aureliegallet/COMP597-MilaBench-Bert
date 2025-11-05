@@ -12,7 +12,7 @@ from codecarbon.external.logger import logger
 from codecarbon.output_methods.base_output import BaseOutput
 from codecarbon.output_methods.emissions_data import EmissionsData, TaskEmissionsData
 
-# temporay monkey-patch to artifically force psutil to fail, so that CodeCarbon uses constant mode for CPU measurements
+# artificially force psutil to fail, so that CodeCarbon uses constant mode for CPU measurements
 import codecarbon.core.cpu 
 codecarbon.core.cpu.is_psutil_available = lambda: False
 

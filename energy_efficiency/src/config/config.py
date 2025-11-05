@@ -1,7 +1,6 @@
-from typing import Any, Optional, Type, TypeVar, cast
+from typing import Any, Type, TypeVar
 import argparse
 import enum
-import os
 
 T = TypeVar("T")
 
@@ -38,71 +37,6 @@ class ConfigArgs(enum.Enum):
     def to_arg(self) -> str:
         return f"--{self.value}"
 
-class _TorchDistributedEnvAutoName(enum.Enum):
-    @staticmethod
-    def _generate_next_value_(name, start, count, last_values) -> str:
-        return name
-
-@enum.unique
-class _TorchDistributedEnv(_TorchDistributedEnvAutoName):
-    LOCAL_RANK = enum.auto()
-    RANK = enum.auto()
-    GROUP_RANK = enum.auto()
-    ROLE_RANK = enum.auto()
-    LOCAL_WORLD_SIZE = enum.auto()
-    WORLD_SIZE = enum.auto()
-    GROUP_WORLD_SIZE = enum.auto()
-    ROLE_WORLD_SIZE = enum.auto()
-
-    def is_present(self) -> bool:
-        return self.value in os.environ
-    
-    def get(self) -> Optional[str]:
-        if self.is_present():
-            return os.environ[self.value]
-        return None
-
-    def get_int(self, default : int) -> int:
-        val = self.get()
-        if val is not None:
-            val = int(val)
-        else:
-            val = default
-        return val
-
-    def get_str(self, default : str) -> str:
-        val = self.get()
-        if val is None:
-            val = default
-        return val
-
-    def get_float(self, default : float) -> float:
-        val = self.get()
-        if val is not None:
-            val = float(val)
-        else:
-            val = default
-        return val
-
-class ConfigDistributed:
-    """Torch distributed config from environment variables.
-
-    This config builds itself by looking up standard PyTorch distributed 
-    environment variables. When the variables are not present, the fields are 
-    `None`.
-
-    """
-
-    def __init__(self) -> None:
-        self.local_rank : int = _TorchDistributedEnv.LOCAL_RANK.get_int(-1)
-        """Local rank of the process."""
-        self.rank : int = _TorchDistributedEnv.RANK.get_int(-1)
-        """Rank of the process."""
-        self.world_size : int = _TorchDistributedEnv.WORLD_SIZE.get_int(-1)
-        """World size of the process."""
-
-    def is_set_up(self) -> bool:
-        return self.local_rank >= 0 and self.rank >= 0 and self.world_size >= 1
 
 class Config:
     """Configuration of the program.
@@ -134,9 +68,6 @@ class Config:
         self.switch_transformers_num_experts : int = _get_arg(args, ConfigArgs.SWITCH_TRANSFORMER_NUM_EXPERTS.value, int)
         """When the selected model is switch-base-n, sets the number of experts 
         per sparse layer. It is recommended to only use powers of two."""
-        self.config_distributed : ConfigDistributed = ConfigDistributed()
-        """Configuration from torch distributed environment variables. Fields 
-        are `None` is the variables are not set"""
 
         self.qwen_num_experts : int = _get_arg(args, ConfigArgs.QWEN_NUM_EXPERTS.value, int)
         """When the selected model is qwen, sets the number of experts per sparse layer. 

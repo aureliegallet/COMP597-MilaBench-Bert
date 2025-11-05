@@ -62,10 +62,11 @@ COMP597-starter-code
 
 TODO: add section for setup and installations
 #### environment setup
+#TODO:change the paths from /mnt to absolute paths
 - setting up the environment on the server:
-    - `cd mnt/nobackup`
+    - `cd /mnt/nobackup`
     - `mkdir <dirname>` 
-    - `cd /mnt/nobackup/omicha1`
+    - `cd /mnt/nobackup/<dirname>`
     - `conda init bash` and check by `cd` and `cat .bashrc` should have
     ```
     # >>> conda initialize >>>
@@ -83,9 +84,9 @@ TODO: add section for setup and installations
     unset __conda_setup
     # <<< conda initialize <<<
     ```
-    - `conda create --prefix=/mnt/nobackup/<dirname>/conda/<envname> python=3.12`
+    - `conda create --prefix=/mnt/nobackup/<dirname>/conda/<envname> python=3.14`
     - `source .bashrc` before trying to activate the conda env
-    - `cp /mnt/nobackup/omicha1/msc-research-exploration/energy_effiency/env.sh /mnt/nobackup/<dirname>/` and modify necessary names
+    - `cp /mnt/nobackup/omicha1/COMP597-starter-code/energy_effiency/env.sh /mnt/nobackup/<dirname>/` and modify necessary names
     ```
     #!/bin/bash
 
@@ -101,11 +102,8 @@ TODO: add section for setup and installations
     ```
     - `mkdir cache` (from /mnt/nobackup/<dirname>/)
     - from now on, on login to the server, simply `cd /mnt/nobackup/<dirname>` and `. env.sh` to activate the conda environment
-    - once you have cloned the project `msc-research-exploration`, `cd msc-research-exploration` and install the requirements by `pip install -r requirements.txt`
+    - once you have cloned the project `COMP597-starter-code`, `cd COMP597-starter-code` and install the requirements by `pip install -r requirements.txt`
     - to disconnect from the environment: `conda deactivate` or simply disconnect from the server
-- to run the deepspeed model and Olivier code:
-    - `cd /mnt/nobackup/omicha1/msc-research-exploration/energy_effiency` and run `python3 launch.py --model switch-base-8` for switch-base-8 code and `./start-deepspeed.sh --train_stats simple` to start the deepspeed model
-    - double check before logging out: `nvidia-smi`
 
 TODO: add section for resources
 ### CodeCarbon Resources
