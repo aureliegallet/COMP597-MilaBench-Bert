@@ -1,16 +1,42 @@
+"""This file contains the configurations for the project.
+"""
 from typing import Any, Type, TypeVar
 import argparse
 import enum
 
+# Used for templated typing.
 T = TypeVar("T")
 
 def _missing_arg(name : str) -> None:
+    """Raise an exception for a missing argument.
+    """
     raise Exception(f"missing argument {name}")
 
 def _wrong_arg_type(name : str, expected : Type[Any], actual : Type[Any]) -> None:
+    """Raise an exception for an argument that has the wrong type.
+    """
     raise Exception(f"argument {name} expected to have type {expected} but got {actual}")
 
 def _get_arg(args : argparse.Namespace, name : str, arg_type : Type[T]) -> T:
+    """Extract an argument from a namespace.
+
+    This function verifies that the requested argument is present and has the correct type. If the checks pass, the argument's value is returned.
+
+    Parameters
+    ----------
+    args
+        Namespace containing the programs arguments.
+    name
+        Name of the argument to extract from the namespace.
+    arg_type
+        Expected type of the argument.
+
+    Returns
+    -------
+    T
+        The value of requested argument.
+
+    """
     if not hasattr(args, name):
         _missing_arg(name)
     elif not isinstance(getattr(args, name), arg_type):
@@ -19,6 +45,8 @@ def _get_arg(args : argparse.Namespace, name : str, arg_type : Type[T]) -> T:
 
 @enum.unique
 class ConfigArgs(enum.Enum):
+    """List of arguments that can be provided to the process.
+    """
     MODEL = "model"
     TRAINER = "trainer"
     DATASET = "dataset"
@@ -28,8 +56,6 @@ class ConfigArgs(enum.Enum):
     TOKENIZE_NUM_PROCESS = "tokenize_num_process"
     BATCH_SIZE = "batch_size"
     TRAIN_STATS = "train_stats"
-    SWITCH_TRANSFORMER_NUM_EXPERTS = "switch_transformer_num_experts"
-    QWEN_NUM_EXPERTS = "qwen_num_experts" # number of experts for Qwen model
     RUN_NUM = "run_num"  # number of the run used for codecarbon file tracking
     PROJECT_NAME = "project_name"  # name of the project used for codecarbon file tracking
     LEARNING_RATE = "learning_rate"  # learning rate for training
@@ -65,13 +91,6 @@ class Config:
         self.train_stats : str = _get_arg(args, ConfigArgs.TRAIN_STATS.value, str)
         """Type of statistics to gather. By default it is set to no-op, which 
         ignores everything."""
-        self.switch_transformers_num_experts : int = _get_arg(args, ConfigArgs.SWITCH_TRANSFORMER_NUM_EXPERTS.value, int)
-        """When the selected model is switch-base-n, sets the number of experts 
-        per sparse layer. It is recommended to only use powers of two."""
-
-        self.qwen_num_experts : int = _get_arg(args, ConfigArgs.QWEN_NUM_EXPERTS.value, int)
-        """When the selected model is qwen, sets the number of experts per sparse layer. 
-        It is recommended to only use powers of two."""
 
         self.run_num : int = _get_arg(args, ConfigArgs.RUN_NUM.value, int)
         """The run number used for codecarbon file tracking."""
