@@ -52,6 +52,8 @@ pip install -r energy_efficiency/requirements.txt
 cat >local_env.sh <<EOF
 #!/bin/bash 
 
+. ~/.bashrc
+
 export PIP_CACHE_DIR=${PIP_CACHE_DIR}
 export HF_HOME=${HF_HOME}
 conda activate ${ENV_PATH}
