@@ -4,6 +4,10 @@ The experiments require access to GPUs to train machine learning models. We have
 
 Jobs can only be run on those nodes using [Slurm](https://slurm.schedmd.com/documentation.html). "GPU node" and "Slurm node" are used interchangeably in this file.
 
+Additionally, please find below a diagram overview of the systems used in this course as a visual aid to the contents of this file.
+
+![image](./COMP597-system-overview.png)
+
 ## Accessing the GPU nodes
 
 McGill IT has documentation on accessing the GPU nodes. You can find it [here](https://docs.sci.mcgill.ca/COMP/slurm/). The account for this course is `energy-efficiency-comp597` and the QOS is `comp597`. 
